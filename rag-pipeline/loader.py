@@ -3,6 +3,7 @@ from urllib.parse import urlparse, parse_qs
 from langchain.schema import Document
 import re 
 import logging
+from typing import List
 
 def _extract_video_id(url: str) -> str:
     try:
@@ -25,7 +26,7 @@ def _extract_video_id(url: str) -> str:
         print(f"Error: {e}")
         return ""
     
-def load_transcript_document(transcript: list[dict], vid_id: str) -> list[Document]:
+def load_transcript_document(transcript: List[dict], vid_id: str) -> List[Document]:
     if not transcript:
         raise ValueError('No transcript found')
     documents = [] 
