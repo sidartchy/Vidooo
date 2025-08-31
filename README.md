@@ -1,4 +1,4 @@
-# YouTube Video Summarizer
+# Vidooo
 
 A RAG application that lets you chat with YouTube videos using their transcripts. Ask questions and get answers with timestamp references.
 
@@ -55,13 +55,11 @@ youtube-summarizer/
 - [ ] **Chunking Strategy**: Merge small transcript chunks for better context
 - [ ] **Hallucination Reduction**: Improve prompt engineering and retrieval
 
+
 ### Planned Features
 - [ ] **Web Extension**: Browser extension for YouTube integration
 - [ ] **Backend API**: FastAPI server for web interface
-- [ ] **Multi-video Support**: Query across multiple videos
-- [ ] **Batch Processing**: Ingest multiple videos at once
-- [ ] **Language Detection**: Auto-detect video language
-- [ ] **Video Metadata**: Store title, description, channel info
+- [ ] **Hybrid Embeddigs**: Try VLMs along with transcripts 
 - [ ] **Caching System**: Cache embeddings to avoid re-computation
 - [ ] **Error Handling**: Better error messages and recovery
 - [ ] **Testing Suite**: Unit tests for all components
@@ -89,5 +87,3 @@ Use debug mode to inspect retrieval:
 MIT License
 
 ---
-
-Made with ❤️ for better video understanding
