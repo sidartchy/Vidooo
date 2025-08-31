@@ -4,7 +4,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from typing import List, Optional
 import os
 
-def init_chroma_db(collection_name: str, persist_directory:str = "./chroma_db") -> Chroma:
+def init_chroma_db(collection_name: str, persist_directory:str = "chroma_db") -> Chroma:
     load_dotenv()
     vector_db = Chroma(
         collection_name=collection_name,

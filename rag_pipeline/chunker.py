@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from typing import List
 
-def chunk_transcripts( documents: List[Document], chunk_size = 1000, chunk_overlap=100):
+def chunk_transcripts( documents: List[Document], chunk_size = 1500, chunk_overlap=200):
     chunker = RecursiveCharacterTextSplitter(
         chunk_size = chunk_size, 
         chunk_overlap = chunk_overlap,
