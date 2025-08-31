@@ -11,12 +11,12 @@ logging.basicConfig(level=logging.INFO)
 
 def main() -> None:
 
-    URL: str = "https://www.youtube.com/watch?v=pGsbEd6w7PI"
+    URL: str = "https://www.youtube.com/watch?v=QqsLTNkzvaY"
 
     chroma_db = init_chroma_db(collection_name="video_chunks")
-    documents = load_documents(URL)
+    documents = load_documents(URL, language='en')  # Explicitly request English transcripts
     chunks = chunk_transcripts(documents)
-    embeddings = embed_texts([chunk.page_content for chunk in chunks])
+    embeddings = embed_texts([chunk.page_content for chunk in chunks], language='en')
     logging.info(f"Generated {len(embeddings)} embeddings for {len(chunks)} chunks.")
 
     # TODO: store in vector store

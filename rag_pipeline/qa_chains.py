@@ -25,6 +25,8 @@ def get_session_history(session_id: str):
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
+
+
 def create_qa_chain() -> Runnable:
 
     load_dotenv()
@@ -33,8 +35,7 @@ def create_qa_chain() -> Runnable:
     try:
         llm = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash",
-            temperature=0.3,  # Add some creativity while staying factual
-            
+            temperature=0.1,  # Lower temperature to reduce hallucinations
         )
     except Exception as e:
         raise Exception(f"Failed to initialize LLM: {e}")
@@ -52,17 +53,22 @@ def create_qa_chain() -> Runnable:
                                 llm, retriever, rephrase_prompt
                                 )
     qa_prompt = ChatPromptTemplate.from_template("""
-    You are an expert at analyzing YouTube video content. Your job is to help users understand what they've watched.
+    You are a precise assistant that answers questions about YouTube video content. Your responses must be based ONLY on the provided context from the video transcript.
 
-    Use the provided context from the video transcript to answer questions. Be comprehensive and helpful. 
-    If the context contains relevant information, use it to provide a thorough answer.
-    If information is missing, acknowledge what you don't know but provide what you can from the context.
-
+    CRITICAL RULES:
+    1. ONLY use information that is explicitly stated in the provided context
+    2. If the context doesn't contain enough information to answer the question, say "Based on the provided context, I cannot answer this question completely" and only provide what you can from the context
+    3. Do NOT make assumptions or add information not present in the context
+    4. When referencing information, include the timestamp references from the metadata
+    5. Be specific and factual, avoid generalizations
+    6. Do not make up information or hallucinate
+    7. Answer to Greetings messages politely.
+    
     Context: {context}
 
     Question: {input}
 
-    Provide a helpful, comprehensive answer based on the video content:""")
+    Answer based ONLY on the provided context:""")
 
     combine_docs_chain = create_stuff_documents_chain(llm, qa_prompt)
 
@@ -81,6 +87,18 @@ def create_qa_chain() -> Runnable:
     
     return chain_with_memory
 
+def debug_retrieval(query: str, collection_name: str):
+    """Debug function to see what documents are being retrieved"""
+    retriever = get_retriever(collection_name=collection_name, k=8)
+    docs = retriever.get_relevant_documents(query)
+    
+    print(f"\n=== DEBUG: Retrieved {len(docs)} documents for query: '{query}' ===\n")
+    for i, doc in enumerate(docs):
+        print(f"Document {i+1}:")
+        print(f"Content: {doc.page_content[:200]}...")
+        print(f"Metadata: {doc.metadata}")
+        print("-" * 50)
+
 def main():
     chain = create_qa_chain()
     session_id = "default_session"
@@ -89,6 +107,13 @@ def main():
         user_input = input("You: ")
         if user_input.lower() in ['exit', 'quit']:
             break
+        
+        if user_input.lower() == 'debug':
+            # Debug mode - show what's being retrieved
+            debug_query = input("Enter query to debug: ")
+            collection_name = os.getenv("COLLECTION_NAME", "video_chunks")
+            debug_retrieval(debug_query, collection_name)
+            continue
             
         response = chain.invoke(
             {"input": user_input},

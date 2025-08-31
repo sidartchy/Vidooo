@@ -49,18 +49,27 @@ def load_transcript_document(transcript: List[dict], vid_id: str) -> List[Docume
             'timestamp':  f"{format_time(start_time)} - {format_time(end_time)}",
             'video_id': video_id,
             "source": f"https://www.youtube.com/watch?v={vid_id}&t={int(start_time)}s",
+            "language": "en", 
         }
 
         documents.append(Document(page_content=text, metadata= metadata))
         logging.debug(f'Entry {idx} transcribed')
     return documents
 
-def load_documents(url: str):
+def load_documents(url: str, language: str = 'en'):
     ytt_api = YouTubeTranscriptApi()
     video_id = _extract_video_id(url)
     if not video_id:
         raise Exception('Video ID not found')
-    transcript = ytt_api.fetch(video_id).to_raw_data()
+    
+    try:
+        # Try to get transcript in specified language
+        transcript = ytt_api.fetch(video_id, languages=[language]).to_raw_data()
+    except Exception as e:
+        print(f"Warning: Could not fetch transcript in {language}. Trying default language...")
+        # Fallback to default language if specified language not available
+        transcript = ytt_api.fetch(video_id).to_raw_data()
+    
     if not transcript:
         raise Exception('Transcript not found')
     documents = load_transcript_document(transcript, video_id)
