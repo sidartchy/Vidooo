@@ -1,0 +1,12 @@
+/* Vidooo extension styles */
+
+/* Hide any existing elements that might conflict */
+#vidooo-indicator {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Ensure our indicator is visible */
+#vidooo-indicator {
+  pointer-events: none;
+  user-select: none;
+}
